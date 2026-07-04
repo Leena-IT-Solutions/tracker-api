@@ -21,9 +21,12 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
+        $this->seed(\Database\Seeders\RoleSeeder::class);
+
         $component = Volt::test('pages.auth.register')
             ->set('name', 'Test User')
             ->set('email', 'test@example.com')
+            ->set('mobile', '9876543210')
             ->set('password', 'password')
             ->set('password_confirmation', 'password');
 
@@ -32,5 +35,8 @@ class RegistrationTest extends TestCase
         $component->assertRedirect(route('dashboard', absolute: false));
 
         $this->assertAuthenticated();
+
+        $user = \App\Models\User::first();
+        $this->assertTrue($user->hasRole('parent'));
     }
 }

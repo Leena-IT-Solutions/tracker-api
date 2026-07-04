@@ -13,7 +13,7 @@ class ProfileTest extends TestCase
 
     public function test_profile_page_is_displayed(): void
     {
-        $user = User::factory()->create();
+        $user = $this->createAdminUser();
 
         $response = $this->actingAs($user)->get('/profile');
 
@@ -33,6 +33,7 @@ class ProfileTest extends TestCase
         $component = Volt::test('profile.update-profile-information-form')
             ->set('name', 'Test User')
             ->set('email', 'test@example.com')
+            ->set('mobile', '9664588677')
             ->call('updateProfileInformation');
 
         $component
@@ -43,6 +44,7 @@ class ProfileTest extends TestCase
 
         $this->assertSame('Test User', $user->name);
         $this->assertSame('test@example.com', $user->email);
+        $this->assertSame('9664588677', $user->mobile);
         $this->assertNull($user->email_verified_at);
     }
 
@@ -97,5 +99,17 @@ class ProfileTest extends TestCase
             ->assertNoRedirect();
 
         $this->assertNotNull($user->fresh());
+    }
+
+    public function test_non_admin_users_cannot_access_profile_page(): void
+    {
+        $this->seed(\Database\Seeders\RoleSeeder::class);
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/profile');
+
+        $response->assertRedirect(route('login'));
+        $response->assertSessionHas('error', 'Unauthorised access!');
+        $this->assertGuest();
     }
 }

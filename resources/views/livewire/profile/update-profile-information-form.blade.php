@@ -10,6 +10,7 @@ new class extends Component
 {
     public string $name = '';
     public string $email = '';
+    public string $mobile = '';
 
     /**
      * Mount the component.
@@ -18,6 +19,7 @@ new class extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->mobile = Auth::user()->mobile ?? '';
     }
 
     /**
@@ -30,6 +32,7 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'mobile' => ['required', 'string', 'max:20', Rule::unique(User::class)->ignore($user->id)],
         ]);
 
         $user->fill($validated);
@@ -69,7 +72,7 @@ new class extends Component
         </h2>
 
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __("Update your account's profile information and email address.") }}
+            {{ __("Update your account's profile information, email address and mobile number.") }}
         </p>
     </header>
 
@@ -102,6 +105,12 @@ new class extends Component
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div>
+            <x-input-label for="mobile" :value="__('Mobile Number')" />
+            <x-text-input wire:model="mobile" id="mobile" name="mobile" type="text" class="mt-1 block w-full" required autocomplete="tel" />
+            <x-input-error class="mt-2" :messages="$errors->get('mobile')" />
         </div>
 
         <div class="flex items-center gap-4">
