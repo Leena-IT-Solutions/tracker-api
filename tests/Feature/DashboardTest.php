@@ -29,4 +29,27 @@ class DashboardTest extends TestCase
             ->assertSee('Attendants')
             ->assertSee('Childrens');
     }
+
+    public function test_system_updater_renders_on_dashboard_and_runs_successfully(): void
+    {
+        \Illuminate\Support\Facades\Process::fake([
+            'git config *' => \Illuminate\Support\Facades\Process::result(''),
+            'git log -1 *' => \Illuminate\Support\Facades\Process::result('abc1234 - Test commit'),
+            'git pull' => \Illuminate\Support\Facades\Process::result('Already up to date.'),
+            'php artisan migrate *' => \Illuminate\Support\Facades\Process::result('Nothing to migrate.'),
+            'php artisan optimize:clear' => \Illuminate\Support\Facades\Process::result('Caches cleared.'),
+        ]);
+
+        $user = $this->createAdminUser();
+
+        $response = $this->actingAs($user)->get('/dashboard');
+
+        $response->assertSeeLivewire('system-updater');
+
+        Volt::test('system-updater')
+            ->assertSee('System Updates')
+            ->assertSee('Current commit:')
+            ->call('updateApp')
+            ->assertSee('Application updated successfully!');
+    }
 }
