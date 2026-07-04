@@ -42,6 +42,10 @@ new class extends Component
         $this->statusMessage = 'Update in progress...';
         $this->statusClass = 'bg-blue-500/10 border-blue-500/25 text-blue-400';
 
+        // Stash local changes to prevent conflicts
+        $this->logMessage('Stashing local uncommitted changes...');
+        Process::path(base_path())->run('git -c safe.directory=* stash -u');
+
         // 1. Git Pull
         $this->logMessage('Executing: git -c safe.directory=* pull --no-edit origin main');
         $gitResult = Process::path(base_path())->run('git -c safe.directory=* pull --no-edit origin main');
@@ -50,7 +54,16 @@ new class extends Component
         
         if (!$gitResult->successful()) {
             $this->finishUpdate(false, 'Git Pull failed.');
+            // Attempt to restore stash
+            Process::path(base_path())->run('git -c safe.directory=* stash pop');
             return;
+        }
+
+        // Restore stashed changes
+        $this->logMessage('Restoring stashed changes...');
+        $stashPopResult = Process::path(base_path())->run('git -c safe.directory=* stash pop');
+        if (!$stashPopResult->successful()) {
+            $this->logMessage('Note: Conflicts occurred when restoring local changes. Stashed changes have been preserved in git stash history.');
         }
 
         // Detect file changes
