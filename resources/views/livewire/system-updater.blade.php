@@ -43,9 +43,9 @@ new class extends Component
         $this->statusClass = 'bg-blue-500/10 border-blue-500/25 text-blue-400';
 
         // 1. Git Pull
-        $this->logMessage('Executing: git -c safe.directory=* pull origin main');
-        $gitResult = Process::path(base_path())->run('git -c safe.directory=* pull origin main');
-        $gitOutput = $gitResult->output() ?: $gitResult->errorOutput();
+        $this->logMessage('Executing: git -c safe.directory=* pull --no-edit origin main');
+        $gitResult = Process::path(base_path())->run('git -c safe.directory=* pull --no-edit origin main');
+        $gitOutput = trim($gitResult->output() . "\n" . $gitResult->errorOutput());
         $this->logMessage($gitOutput);
         
         if (!$gitResult->successful()) {
@@ -62,7 +62,7 @@ new class extends Component
         if ($composerChanged) {
             $this->logMessage('Changes detected in composer configuration. Executing: composer install');
             $composerResult = Process::path(base_path())->run('composer install --no-interaction');
-            $this->logMessage($composerResult->output() ?: $composerResult->errorOutput());
+            $this->logMessage(trim($composerResult->output() . "\n" . $composerResult->errorOutput()));
             if (!$composerResult->successful()) {
                 $this->finishUpdate(false, 'Composer Install failed.');
                 return;
@@ -79,7 +79,7 @@ new class extends Component
         }
         
         $migrationResult = Process::path(base_path())->run('php artisan migrate --force');
-        $this->logMessage($migrationResult->output() ?: $migrationResult->errorOutput());
+        $this->logMessage(trim($migrationResult->output() . "\n" . $migrationResult->errorOutput()));
         if (!$migrationResult->successful()) {
             $this->finishUpdate(false, 'Database migrations failed.');
             return;
@@ -88,16 +88,16 @@ new class extends Component
         // 4. Cache Clear & Optimize
         $this->logMessage('Optimizing application caches. Executing: php artisan optimize:clear');
         $optimizeResult = Process::path(base_path())->run('php artisan optimize:clear');
-        $this->logMessage($optimizeResult->output() ?: $optimizeResult->errorOutput());
+        $this->logMessage(trim($optimizeResult->output() . "\n" . $optimizeResult->errorOutput()));
 
         // 5. NPM Build if package changed
         if ($npmChanged) {
             $this->logMessage('Changes detected in npm dependencies. Executing: npm install && npm run build');
             $npmInstallResult = Process::path(base_path())->run('npm install');
-            $this->logMessage($npmInstallResult->output() ?: $npmInstallResult->errorOutput());
+            $this->logMessage(trim($npmInstallResult->output() . "\n" . $npmInstallResult->errorOutput()));
             
             $npmBuildResult = Process::path(base_path())->run('npm run build');
-            $this->logMessage($npmBuildResult->output() ?: $npmBuildResult->errorOutput());
+            $this->logMessage(trim($npmBuildResult->output() . "\n" . $npmBuildResult->errorOutput()));
         }
 
         $this->loadCurrentCommit();
