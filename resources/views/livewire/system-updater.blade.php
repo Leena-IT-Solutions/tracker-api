@@ -149,7 +149,7 @@ new class extends Component
             </p>
         </div>
 
-        <button wire:click="updateApp" wire:loading.attr="disabled" class="px-5 py-2.5 text-sm font-bold rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-indigo-500/10 flex items-center gap-2 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button wire:click="updateApp" wire:loading.attr="disabled" class="whitespace-nowrap shrink-0 px-5 py-2.5 text-sm font-bold rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-indigo-500/10 flex items-center gap-2 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed">
             <svg wire:loading.remove class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
             </svg>
