@@ -27,7 +27,7 @@ new class extends Component
     public function loadCurrentCommit(): void
     {
         $this->ensureGitSafeDirectory();
-        $result = Process::path(base_path())->run('git log -1 --pretty=format:"%h - %s (%ci)"');
+        $result = Process::path(base_path())->run('git -c safe.directory=* log -1 --pretty=format:"%h - %s (%ci)"');
         if ($result->successful()) {
             $this->currentCommit = $result->output();
         } else {
@@ -43,8 +43,8 @@ new class extends Component
         $this->statusClass = 'bg-blue-500/10 border-blue-500/25 text-blue-400';
 
         // 1. Git Pull
-        $this->logMessage('Executing: git pull');
-        $gitResult = Process::path(base_path())->run('git pull');
+        $this->logMessage('Executing: git -c safe.directory=* pull');
+        $gitResult = Process::path(base_path())->run('git -c safe.directory=* pull');
         $gitOutput = $gitResult->output() ?: $gitResult->errorOutput();
         $this->logMessage($gitOutput);
         
