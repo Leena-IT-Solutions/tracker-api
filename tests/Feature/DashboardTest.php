@@ -35,7 +35,7 @@ class DashboardTest extends TestCase
         \Illuminate\Support\Facades\Process::fake([
             'git config *' => \Illuminate\Support\Facades\Process::result(''),
             'git -c safe.directory=* log -1 *' => \Illuminate\Support\Facades\Process::result('abc1234 - Test commit'),
-            'git -c safe.directory=* pull' => \Illuminate\Support\Facades\Process::result('Already up to date.'),
+            'git -c safe.directory=* pull origin main' => \Illuminate\Support\Facades\Process::result('Already up to date.'),
             'php artisan migrate *' => \Illuminate\Support\Facades\Process::result('Nothing to migrate.'),
             'php artisan optimize:clear' => \Illuminate\Support\Facades\Process::result('Caches cleared.'),
         ]);

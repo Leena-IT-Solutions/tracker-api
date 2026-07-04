@@ -43,8 +43,8 @@ new class extends Component
         $this->statusClass = 'bg-blue-500/10 border-blue-500/25 text-blue-400';
 
         // 1. Git Pull
-        $this->logMessage('Executing: git -c safe.directory=* pull');
-        $gitResult = Process::path(base_path())->run('git -c safe.directory=* pull');
+        $this->logMessage('Executing: git -c safe.directory=* pull origin main');
+        $gitResult = Process::path(base_path())->run('git -c safe.directory=* pull origin main');
         $gitOutput = $gitResult->output() ?: $gitResult->errorOutput();
         $this->logMessage($gitOutput);
         
